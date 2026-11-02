@@ -1,0 +1,448 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gustavo Banegas — Cryptography &amp; Surf</title>
+<meta name="description" content="Gustavo Banegas — Cryptography Researcher at INRIA / LiX, Ecole Polytechnique de Paris">
+<!-- Swap this for Google Fonts when deploying:
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #0c0f14;
+    --border: #252b38;
+    --text: #c8cdd8;
+    --text-muted: #6b7280;
+    --text-dim: #4a5060;
+    --accent: #38bdf8;
+    --accent-dim: #1e6fa0;
+    --warm: #f0a050;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --max-w: 720px;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background-color: var(--bg);
+    padding: 0 24px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--warm); }
+
+  .container {
+    max-width: var(--max-w);
+    width: 100%;
+    margin: 0 auto;
+    padding: 60px 0 60px;
+  }
+
+  /* ── HEADER ── */
+  .header { text-align: center; margin-bottom: 32px; }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+
+  .name {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    margin-bottom: 2px;
+  }
+
+  .tagline {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  /* ── CONTACT ── */
+  .contact {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    line-height: 2;
+  }
+  .contact a { color: var(--text-muted); }
+  .contact a:hover { color: var(--accent); }
+  .dot { margin: 0 5px; color: var(--text-dim); }
+
+  /* ── SHORT BIO ── */
+  .bio {
+    font-family: var(--serif);
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 28px;
+    text-align: center;
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .bio a { border-bottom: 1px solid var(--accent-dim); }
+  .bio a:hover { border-bottom-color: var(--warm); }
+
+  /* ── MENU ── */
+  .menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .menu-btn {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 2px;
+  }
+  .menu-btn:hover { color: var(--accent); }
+  .menu-btn.active { color: var(--warm); }
+  .menu-btn.active::before { content: '\25B8\00a0'; font-size: 10px; }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding-top: 20px; }
+  .panel.open { display: block; animation: fadeUp 0.2s ease-out; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-head {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--warm);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel-head span { flex: 1; height: 1px; background: var(--border); }
+  .panel-head .x {
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--mono);
+    margin-left: auto;
+    padding: 0 4px;
+    order: 99;
+  }
+  .panel-head .x:hover { color: var(--accent); }
+
+  /* ── ENTRIES ── */
+  .entry {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 0 12px;
+    align-items: baseline;
+  }
+  .entry:last-child { border-bottom: none; }
+
+  .yr {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 300;
+    grid-row: 1 / 3;
+  }
+
+  .ti {
+    font-size: 13px;
+    color: #e0e4ec;
+    line-height: 1.5;
+  }
+  .ti a { color: #e0e4ec; }
+  .ti a:hover { color: var(--accent); }
+
+  .ve {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--serif);
+    font-style: italic;
+    margin-top: 1px;
+  }
+
+  /* ── PC LIST ── */
+  .pc-list { list-style: none; columns: 2; column-gap: 28px; }
+  .pc-list li { font-size: 13px; padding: 3px 0; break-inside: avoid; }
+  .pc-list .yr-sm { color: var(--text-dim); font-size: 11px; margin-left: 4px; }
+
+  /* ── ABOUT FULL ── */
+  .bio-full p {
+    font-family: var(--serif);
+    font-size: 14.5px;
+    color: var(--text);
+    margin-bottom: 11px;
+    line-height: 1.8;
+  }
+  .bio-full a { border-bottom: 1px solid var(--accent-dim); }
+  .bio-full a:hover { border-bottom-color: var(--warm); }
+
+  .empty-note {
+    font-family: var(--serif);
+    color: var(--text-muted);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 0 16px; }
+    .container { padding: 36px 0 40px; }
+    .name { font-size: 20px; }
+    .menu { gap: 4px 14px; }
+    .menu-btn { font-size: 12px; }
+    .entry { grid-template-columns: 42px 1fr; }
+    .pc-list { columns: 1; }
+    .avatar { width: 80px; height: 80px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<div class="header">
+  <img src="/images/profile.png" alt="Gustavo Banegas" class="avatar"><br>
+  <div class="name">Gustavo Banegas</div>
+  <div class="tagline">cryptography &amp; surf</div>
+</div>
+
+<!-- ══════════════════════ CONTACT ══════════════════════ -->
+<div class="contact">
+  <a href="mailto:gustavo@cryptme.in">gustavo[at]cryptme[dot]in</a><span class="dot">·</span><a href="https://scholar.google.com/citations?user=0AIDhMwAAAAJ">scholar</a><span class="dot">·</span><a href="https://orcid.org/0000-0001-5502-2977">orcid</a><span class="dot">·</span><a href="https://github.com/gbanegas">github</a><span class="dot">·</span><a href="https://bsky.app/profile/gustavosbanegas.bsky.social">bluesky</a><span class="dot">·</span><a href="https://x.com/gustavosbanegas">x</a><span class="dot">·</span><a href="/files/resume.pdf">cv</a>
+</div>
+
+<!-- ══════════════════════ SHORT BIO ══════════════════════ -->
+<div class="bio">
+  Cryptography researcher at <a href="https://team.inria.fr/grace/">INRIA ECLAIR</a> in Saclay
+  and professor at LiX, Ecole Polytechnique de Paris.
+  Post-quantum crypto, isogenies, side-channel attacks, zero-knowledge proofs.
+</div>
+
+<!-- ══════════════════════ MENU ══════════════════════ -->
+<div class="menu" id="menu">
+  <button class="menu-btn" data-panel="about">about</button>
+  <button class="menu-btn" data-panel="students">students</button>
+  <button class="menu-btn" data-panel="interns">interns</button>
+  <button class="menu-btn" data-panel="pubs">publications</button>
+  <button class="menu-btn" data-panel="talks">talks</button>
+  <button class="menu-btn" data-panel="blog">blog</button>
+  <button class="menu-btn" data-panel="pc">program committees</button>
+</div>
+
+<!-- ═══════════════ PANEL: ABOUT ═══════════════ -->
+<div class="panel" id="p-about">
+  <div class="panel-head">About <span></span> <button class="x" data-close="about">[close]</button></div>
+  <div class="bio-full">
+    <p>I am a cryptography researcher at the <a href="https://team.inria.fr/grace/">GRACE team</a> at INRIA in Saclay, France, and a professor at LiX (Ecole Polytechnique de Paris).</p>
+    <p>I am part of the zero-knowledge project <a href="https://piq.inria.fr/en/projets/#Tout-ZK">Tout-ZK</a>, a joint initiative with <a href="https://pages.saclay.inria.fr/daniel.augot/">Daniel Augot</a>, which aims to systematically evaluate the real-life performance of various ZK software.</p>
+    <p>Previously I was a senior cryptographer at Qualcomm France and a post-doc with <a href="https://www.lix.polytechnique.fr/~smith/">Benjamin Smith</a> at INRIA (2020–2022), and before that at Chalmers University of Technology in Sweden (2019–2020).</p>
+    <p>I completed my PhD at Eindhoven University of Technology under <a href="https://www.hyperelliptic.org/tanja/index.html">Tanja Lange</a> and <a href="https://cr.yp.to/djb.html">Daniel J. Bernstein</a>, as a fellow of ECRYPT-NET (Horizon 2020 / Marie Skłodowska-Curie). Thesis: <a href="/files/phd_thesis.pdf">"Selected constructive and destructive approaches to post-quantum cryptography"</a>.</p>
+    <p>MSc (2015) and BSc (2012) in computer science at UFSC, Brazil, supervised by Ricardo Custódio and <a href="http://people.math.carleton.ca/~daniel/research/students.html">Daniel Panario</a>.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ PANEL: STUDENTS ═══════════════ -->
+<div class="panel" id="p-students">
+  <div class="panel-head">Students <span></span> <button class="x" data-close="students">[close]</button></div>
+  <div class="bio-full">
+    <p><strong style="color: var(--warm); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">PhD Students</strong></p>
+    <p>2026 – present · Jad Zahreddine (co-supervised with <a href="https://www.lix.polytechnique.fr/~smith/">Benjamin Smith</a>)</p>
+
+    <p><strong style="color: var(--warm); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Master Students</strong></p>
+     <p>2019 – 2019 · <a href="https://www.cits.ruhr-uni-bochum.de/personen/vanhoof.html">Maya Iggy van Hoof</a>, <a href="https://research.tue.nl/en/studentTheses/concrete-quantum-cryptanalysis-of-binary-elliptic-curves/">Concrete quantum-cryptanalysis of binary elliptic curves</a> (co-supervised with <a href="https://hyperelliptic.org/tanja/students.html#master">Tanja Lange</a>) </p>
+    <p><strong style="color: var(--warm); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Bachelor Students</strong></p>
+    <p>2026 – 2026 · Matteo Sainton, A Theoretical and Practical Exploration of the CRYSTALS-Dilithium Post-Quantum Signature Scheme</p>
+  </div>
+</div>
+
+
+<div class="panel" id="p-interns">
+  <div class="panel-head">Internships <span></span> <button class="x" data-close="interns">[close]</button></div>
+  <div class="bio-full">
+    <p><strong style="color: var(--warm); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Interns and Former Interns</strong></p>
+    <p>2026 – 2026 · Maria-Alexia Tudorache, Post-quantum schemes in RISC-V (https://github.com/pqriscv/pqriscv).</p>
+    <p>2026 – 2026 · Damya Bouizegarene, So Long, and Thanks for All the Seeds: Attacking GGM-trees in Post-quantum signatures.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ PANEL: PUBLICATIONS ═══════════════ -->
+<div class="panel" id="p-pubs">
+  <div class="panel-head">Publications <span></span> <button class="x" data-close="pubs">[close]</button></div>
+ 
+  <!-- To add a paper: copy an .entry block, fill in year/title/coauthors/venue -->
+  <!-- Use <span class="me"> around your own name -->
+  <div class="entry"><div class="yr">2026</div><div class="ti"><a href="/files/papers/oops.pdf">From if to Oops: Turning a conditional into a key-recovery oracle</a></div><div class="au"><span class="me">G. Banegas</span>, Nia Dimitrova, Monika Trimoska</div><div class="ve">eprint</div></div>
+  <div class="entry"><div class="yr">2026</div><div class="ti"><a href="/files/papers/load.pdf">Exploiting Load/Store Leakage of Sparse Vectors for Key Recovery in HQC</a></div><div class="au"><span class="me">G. Banegas</span>, Benjamin Smith, Jad Zahreddine</div><div class="ve">eprint</div></div>
+  <div class="entry"><div class="yr">2026</div><div class="ti"><a href="/files/papers/solong.pdf">So Long, and Thanks for All the Seeds: Attacking GGM-trees in Post-quantum signatures</a></div><div class="au"><span class="me">G. Banegas</span>, Damya Bouizegarene</div><div class="ve">eprint</div></div>
+  <div class="entry"><div class="yr">2026</div><div class="ti"><a href="/files/papers/fastiso2.pdf">Fast Isogeny Evaluation on Binary Curves</a></div><div class="au"><span class="me">G. Banegas</span>, Nicolas Sarki, Benjamin Smith</div><div class="ve">eprint</div></div>
+  <div class="entry"><div class="yr">2026</div><div class="ti"><a href="/files/papers/smallhaetae.pdf">Low-Stack HAETAE for Memory-Constrained Microcontrollers</a></div><div class="au">  YoungBeom Kim, Christine van Vredendaal, <span class="me">G. Banegas</span>, Seog Chung Seo</div><div class="ve">CHES 2026</div></div>
+  <div class="entry"><div class="yr">2025</div><div class="ti"><a href="/files/papers/dacs.pdf">Hardened CTIDH: Dummy-Free and Deterministic CTIDH</a></div><div class="au"> <span class="me">G. Banegas</span>, A. Hellenbrand, M. Saldanha</div><div class="ve">INDOCRYPT 2025</div></div>
+  <div class="entry"><div class="yr">2025</div><div class="ti"><a href="/files/papers/evalidation.pdf">Compressed verification for post-quantum signatures with long-term public keys</a></div><div class="au"><span class="me">G. Banegas</span>, A. Le Dévéhat, B. Smith</div><div class="ve">CANS 2025</div></div>
+  <div class="entry"><div class="yr">2024</div><div class="ti"><a href="/files/papers/snova_analysis.pdf">A Fault Analysis on SNOVA</a></div><div class="au"><span class="me">G. Banegas</span>, R. Villanueva-Polanco</div><div class="ve">eprint</div></div>
+  <div class="entry"><div class="yr">2023</div><div class="ti"><a href="/files/papers/k_velu.pdf">Fast and Frobenius: Rational Isogeny Evaluation over Finite Fields</a></div><div class="au"><span class="me">G. Banegas</span>, V. Gilchrist, A. Le Dévéhat, B. Smith</div><div class="ve">LATINCRYPT 2023</div></div>
+  <div class="entry"><div class="yr">2023</div><div class="ti"><a href="/files/papers/msphincs.pdf">Multi-Armed SPHINCS+</a></div><div class="au"><span class="me">G. Banegas</span>, F. Caullery</div><div class="ve">ACNS-SCI 2023</div></div>
+  <div class="entry"><div class="yr">2023</div><div class="ti"><a href="/files/papers/tkyber.pdf">Breaking DPA-Protected Kyber via the Pair-Pointwise Multiplication</a></div><div class="au">E. Alpirez Bock, <span class="me">G. Banegas</span>, C. Brzuska, L. Chmielewski, K. Puniamurthy, M. Sorf</div><div class="ve">ACNS 2024</div></div>
+  <div class="entry"><div class="yr">2022</div><div class="ti"><a href="/files/papers/egnoisy.pdf">Disorientation Faults in CSIDH</a></div><div class="au"><span class="me">G. Banegas</span>, J. Krämer, T. Lange, M. Meyer, L. Panny, K. Reijnders, J. Sotáková, M. Trimoska</div><div class="ve">EUROCRYPT 2023</div></div>
+  <div class="entry"><div class="yr">2022</div><div class="ti"><a href="/files/papers/cold.pdf">On Recovering Block Cipher Secret Keys in the Cold Boot Attack Setting</a></div><div class="au"><span class="me">G. Banegas</span>, R. Villanueva-Polanco</div><div class="ve">Cryptogr. Commun. 2025</div></div>
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/papers/deva.pdf">DEVA: Decentralized, Verifiable Secure Aggregation for Privacy-Preserving Learning</a></div><div class="au">G. Tsaloli, B. Liang, C. Brunetta, <span class="me">G. Banegas</span>, A. Mitrokotsa</div><div class="ve">ISC 2021</div></div>
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/papers/swave.pdf">Wavelet: Code-based Post-Quantum Signatures with Fast Verification on Microcontrollers</a></div><div class="au"><span class="me">G. Banegas</span>, Thomas Debris-Alazard, Milena Nedeljković, Benjamin Smith</div><div class="ve">Preprint</div></div>
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/papers/ctidh.pdf">CTIDH: Faster Constant-Time CSIDH</a></div><div class="au"><span class="me">G. Banegas</span>, D.J. Bernstein, F. Campos, T. Chou, T. Lange, M. Meyer, B. Smith, J. Sotáková</div><div class="ve">TCHES 2021</div></div>
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/papers/qsig.pdf">Quantum-Resistant Security for Software Updates on Low-power Networked Embedded Devices</a></div><div class="au"><span class="me">G. Banegas</span>, K. Zandberg, E. Baccelli, A. Herrmann, B. Smith</div><div class="ve">ACNS 2022</div></div>
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/papers/acisp_2021.pdf">Non-Interactive, Secure Verifiable Aggregation for Decentralized, Privacy-Preserving Learning</a></div><div class="au">C. Brunetta, G. Tsaloli, B. Liang, <span class="me">G. Banegas</span>, A. Mitrokotsa</div><div class="ve">ACISP 2021</div></div>
+  <div class="entry"><div class="yr">2020</div><div class="ti"><a href="/files/papers/eprint_ecc.pdf">Concrete Quantum Cryptanalysis of Binary Elliptic Curves</a></div><div class="au"><span class="me">G. Banegas</span>, D.J. Bernstein, I. van Hoof, T. Lange</div><div class="ve">TCHES 2020</div></div>
+  <div class="entry"><div class="yr">2019</div><div class="ti"><a href="/files/papers/phd_thesis.pdf">Selected Constructive and Destructive Approaches to Post-Quantum Cryptography</a></div><div class="au"><span class="me">G. Banegas</span></div><div class="ve">PhD Thesis, TU/e</div></div>
+  <div class="entry"><div class="yr">2019</div><div class="ti"><a href="/files/papers/845.pdf">A Reaction Attack against Cryptosystems based on LRPC Codes</a></div><div class="au">Simona Samardjiska, Paolo Santini, Edoardo Persichetti, <span class="me">G. Banegas</span></div><div class="ve">Latincrypt 2019</div></div>
+  <div class="entry"><div class="yr">2019</div><div class="ti"><a href="/files/papers/797.pdf">Don't Forget Your Roots: Constant-Time Root Finding over 𝔽₂ᵐ</a></div><div class="au">D. Martins, <span class="me">G. Banegas</span>, R. Custódio</div><div class="ve">Latincrypt 2019</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="/files/papers/677.pdf">DAGS: Reloaded — Revisiting Dyadic Key Encapsulation</a></div><div class="au">Paulo S Barreto, <span class="me">G. Banegas</span>, Brice Odilon Boidje, Pierre-Louis Cayrel, Gilbert Ndollane Dione, Kris Gaj, Cheikh Thiécoumba Gueye, Richard Haeussler, Jean Belo Klamti, Ousmane N'diaye, Duc Tri Nguyen, Edoardo Persichetti, Jefferson E Ricardini, Marco Baldi, Paolo Santini</div><div class="ve">CBC Workshop 2019</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="https://www.degruyter.com/view/j/jmc.2018.12.issue-4/jmc-2018-0027/jmc-2018-0027.xml">DAGS: Key Encapsulation using Dyadic GS Codes</a></div><div class="au"><span class="me">G. Banegas</span>, Paulo SLM Barreto, Brice Odilon Boidje, Pierre-Louis Cayrel, Gilbert Ndollane Dione, Kris Gaj, Cheikh Thiécoumba Gueye, Richard Haeussler, Jean Belo Klamti, Ousmane N'diaye, Duc Tri Nguyen, Edoardo Persichetti, Jefferson E Ricardini</div><div class="ve">J. Math. Cryptology</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="/files/papers/650.pdf">Designing Efficient Dyadic Operations for Cryptographic Applications</a></div><div class="au"><span class="me">G. Banegas</span>, PSLM Barreto, E Persichetti, P Santini</div><div class="ve">MathCrypt 2018</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="/files/papers/irreducible_pentanomials.pdf">A New Class of Irreducible Pentanomials for Polynomial-Based Multipliers in Binary Fields</a></div><div class="au"><span class="me">G. Banegas</span>, R. Custódio, D. Panario</div><div class="ve">JCEN 2018</div></div>
+  <div class="entry"><div class="yr">2017</div><div class="ti"><a href="/files/papers/DAGS_spec.pdf">DAGS: Key Encapsulation using Dyadic GS Codes</a></div><div class="au"><span class="me">G. Banegas</span>, Paulo SLM Barreto, Brice Odilon Boidje, Pierre-Louis Cayrel, Gilbert Ndollane Dione, Kris Gaj, Cheikh Thiécoumba Gueye, Richard Haeussler, Jean Belo Klamti, Ousmane N'diaye, Duc Tri Nguyen, Edoardo Persichetti, Jefferson E Ricardini</div><div class="ve">NIST PQC Submission</div></div>
+  <div class="entry"><div class="yr">2017</div><div class="ti"><a href="/files/papers/groverrho-20170818.pdf">Low-Communication Parallel Quantum Multi-Target Preimage Search</a></div><div class="au"><span class="me">G. Banegas</span>, D.J. Bernstein</div><div class="ve">SAC 2017</div></div>
+</div>
+
+<!-- ═══════════════ PANEL: TALKS ═══════════════ -->
+<div class="panel" id="p-talks">
+  <div class="panel-head">Talks <span></span> <button class="x" data-close="talks">[close]</button></div>
+
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/talks/access_talk.pdf">Quantum Resource Estimation to Break Cryptographic Schemes</a></div><div class="ve">ACCESS Seminar</div></div>
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/talks/gt_talk.pdf">Quantum Cryptanalysis of ECC</a></div><div class="ve">GT Seminar, Paris</div></div>
+  <div class="entry"><div class="yr">2021</div><div class="ti"><a href="/files/talks/talks/ufsc.pdf">Quantum Cryptanalysis: Let's Build a Quantum Computer</a></div><div class="ve">UFSC, Brazil (online)</div></div>
+  <div class="entry"><div class="yr">2019</div><div class="ti"><a href="/files/talks/phd_talk.pdf">Selected Constructive and Destructive Approaches to Post-Quantum Cryptography</a></div><div class="ve">PhD Defense, TU/e</div></div>
+  <div class="entry"><div class="yr">2019</div><div class="ti"><a href="/files/talks/talk_fau.pdf">Introduction to Quantum Algorithms and Code-Based Cryptography Implementation</a></div><div class="ve">CryptoCafe, FAU, Florida</div></div>
+  <div class="entry"><div class="yr">2019</div><div class="ti"><a href="/files/talks/talk_sweden.pdf">Post-Quantum Cryptography: From Construction to Destruction</a></div><div class="ve">Gothenburg, Sweden</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="/files/talks/talk_intro_circuits.pdf">Quantum Circuits: Simulating a Quantum Computer</a></div><div class="ve">Quantum Research Retreat, Tenerife</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="/files/talks/slides_math_crypt_revised_2.pdf">Designing Efficient Dyadic Operations for Cryptographic Applications</a></div><div class="ve">MathCrypt 2018, California</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="/files/talks/talk_labsec.pdf">Post-Quantum Cryptography 101: From Basic to Attacks</a></div><div class="ve">Florianópolis, Brazil</div></div>
+  <div class="entry"><div class="yr">2018</div><div class="ti"><a href="/files/talks/dags_slides.pdf">DAGS — Key Encapsulation from Dyadic GS Codes</a></div><div class="ve">PQC Event, Tenerife</div></div>
+  <div class="entry"><div class="yr">2017</div><div class="ti"><a href="/files/talks/ecryptnet_meeting_crete.pdf">Preimage (and Kittens) Search Using Grover Algorithm</a></div><div class="ve">ECRYPT-NET, Crete</div></div>
+  <div class="entry"><div class="yr">2017</div><div class="ti"><a href="/files/talks/quantum_seminar.pdf">Low-Communication Parallel Quantum Multi-Target Preimage Search</a></div><div class="ve">Dagstuhl Seminar</div></div>
+  <div class="entry"><div class="yr">2017</div><div class="ti"><a href="/files/talks/groverrho_sac.pdf">Low-Communication Parallel Quantum Multi-Target Preimage Search</a></div><div class="ve">SAC 2017, Ottawa</div></div>
+  <div class="entry"><div class="yr">2017</div><div class="ti"><a href="/files/talks/cwg_low.pdf">Low-Communication Parallel Quantum Multi-Target Preimage Search</a></div><div class="ve">CWG, Utrecht</div></div>
+  <div class="entry"><div class="yr">2016</div><div class="ti"><a href="/files/talks/leuven_talk_2016.pdf">Introduction to Quantum Algorithms</a></div><div class="ve">ECRYPT-NET School, Leuven</div></div>
+</div>
+
+<!-- ═══════════════ PANEL: BLOG ═══════════════ -->
+<div class="panel" id="p-blog">
+  <div class="panel-head">Blog <span></span> <button class="x" data-close="blog">[close]</button></div>
+  <p class="empty-note">Nothing here yet — stay tuned.</p>
+</div>
+
+<!-- ═══════════════ PANEL: PC ═══════════════ -->
+<div class="panel" id="p-pc">
+  <div class="panel-head">Program Committees <span></span> <button class="x" data-close="pc">[close]</button></div>
+  <ul class="pc-list">
+    <li><a href="https://ches.iacr.org/2027/">TCHES</a> <span class="yr-sm">2027</span></li>
+    <li><a href="https://cascade-conference.org/program_committee.html">CASCADE</a> <span class="yr-sm">2026</span></li>
+    <li><a href="https://active.cs.ru.nl/2026/">ACTIVE</a> <span class="yr-sm">2026</span></li>
+    <li><a href="https://ches.iacr.org/2026/">TCHES</a> <span class="yr-sm">2026</span></li>
+    <li><a href="https://ciencias.medellin.unal.edu.co/eventos/latincrypt/">LatinCrypt</a> <span class="yr-sm">2025</span></li>
+    <li><a href="https://pqcrypto2025.iis.sinica.edu.tw/">PQCrypto</a> <span class="yr-sm">2025</span></li>
+    <li><a href="https://asiaccs2024.sutd.edu.sg/">ACM ASIACCS</a> <span class="yr-sm">2024</span></li>
+    <li><a href="https://ches.iacr.org/2024/">TCHES</a> <span class="yr-sm">2024</span></li>
+    <li><a href="https://wp.nyu.edu/acns2024/">ACNS</a> <span class="yr-sm">2024</span></li>
+    <li><a href="https://ches.iacr.org/2023/">TCHES</a> <span class="yr-sm">2023</span></li>
+    <li>Asiacrypt <span class="yr-sm">2023</span></li>
+    <li><a href="https://www.espe.edu.ec/latincrypt/">LatinCrypt</a> <span class="yr-sm">2023</span></li>
+    <li><a href="https://eurocrypt.iacr.org/2022/">Eurocrypt</a> <span class="yr-sm">2022</span></li>
+    <li><a href="https://ches.iacr.org/2022/">TCHES</a> <span class="yr-sm">2022</span></li>
+    <li><a href="https://www.cb-crypto.org/">CBCrypto</a> <span class="yr-sm">2020–21</span></li>
+  </ul>
+</div>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer>&copy; 2026 Gustavo Banegas · Saclay, France · <a href="https://team.inria.fr/grace/">INRIA GRACE</a></footer>
+
+</div>
+
+<script>
+(function() {
+  var panels = document.querySelectorAll('.panel');
+  var btns   = document.querySelectorAll('.menu-btn');
+  var closes = document.querySelectorAll('.x');
+
+  function open(id) {
+    for (var i = 0; i < panels.length; i++) panels[i].classList.remove('open');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+
+    var p = document.getElementById('p-' + id);
+    if (p) {
+      p.classList.add('open');
+      for (var i = 0; i < btns.length; i++) {
+        if (btns[i].getAttribute('data-panel') === id) btns[i].classList.add('active');
+      }
+      setTimeout(function() { p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
+    }
+  }
+
+  function closeAll() {
+    for (var i = 0; i < panels.length; i++) panels[i].classList.remove('open');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  }
+
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      var id = this.getAttribute('data-panel');
+      var p = document.getElementById('p-' + id);
+      if (p && p.classList.contains('open')) { closeAll(); }
+      else { open(id); }
+    });
+  }
+
+  for (var i = 0; i < closes.length; i++) {
+    closes[i].addEventListener('click', function() { closeAll(); });
+  }
+})();
+</script>
+</body>
+</html>
